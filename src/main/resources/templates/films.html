@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+<style>
+  body {
+    background: rgb(77,101,255);
+    background: linear-gradient(90deg, rgba(77,101,255,1) 0%, rgba(77,101,255,1) 40%, rgba(255,135,0,1) 100%);
+    font-family: 'Amarante', serif;
+  }
+
+  table {
+    border: 1px solid #dddddd;
+    width: 100%;
+  }
+
+  th{
+    border: 1px solid #dddddd;
+    text-align: center;
+    font-size: large;
+    font-family: 'Sancreek', serif;
+  }
+
+  td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    font-family: 'Amarante', serif;
+  }
+
+  .logo{
+    max-width: 750px;
+  }
+
+  .mascot{
+    max-height: 200px;
+    max-width: 100px;
+  }
+
+  .container{
+    text-align: center;
+    padding: 3%;
+  }
+
+  option{
+    font-family: 'Amarante', serif;
+  }
+
+  form{
+    font-size: larger;
+    padding-bottom: 1%;
+  }
+</style>
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sancreek&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amarante&family=Sancreek&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>T-oolong Tapes</title>
+</head>
+<body>
+<div class="container">
+  <a href="http://localhost:5000/web/films"><img class="logo" th:src="@{https://gcdnb.pbrd.co/images/BQTmNpglkNeD.gif?o=1}" alt="Toolong Tapes Gif"></a>
+  <img class="mascot" th:src="@{https://gcdnb.pbrd.co/images/rUq8TSov9KsJ.gif?o=1}" alt="Oolong Gif">
+</div>
+<form th:action="@{/web/films}" method="get">
+  <label for="query">Search</label>
+  <select id="isBool" name="searchType" class="form-select" style="font-family: 'Amarante', serif;">
+      <option value="1">Movies</option>
+      <option value="0">Actors</option>
+  </select>
+  <input type="text" id="query" name="query" placeholder="Search..." style="font-family: 'Amarante', serif;"/>
+  <label>Latest<input type="checkbox" id="sort" name="sort" value="sort"></label>
+  <input type="submit" value="Go!" style="font-family: 'Sancreek', serif;"/>
+</form>
+<table>
+  <thead>
+  <tr>
+    <th>Title</th>
+    <th>Release Year</th>
+    <th>Rating</th>
+    <th>Length</th>
+    <th>Actors</th>
+    <th>Description</th>
+  </tr>
+  </thead>
+  <tr th:each="film : ${films}">
+    <td th:text="${film.Title}"></td>
+    <td th:text="${film.Date}"></td>
+    <td th:text="${film.Rating}"></td>
+    <td th:text="${film.Length}"></td>
+    <td th:text="${film.Actors}"></td>
+    <td th:text="${film.Description}"></td>
+  </tr>
+</table>
+</body>
+</html>
