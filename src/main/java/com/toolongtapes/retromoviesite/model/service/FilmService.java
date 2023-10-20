@@ -24,45 +24,60 @@ public class FilmService {
         this.filmActorRepository = filmActorRepository;
     }
 
-    public List<FilmDTO> findFilmAndActor(@RequestParam String sort){
-        ArrayList<FilmDTO> films = new ArrayList<>();
-        for (Film film: filmRepository.findAll()){
-            FilmDTO newEntry = new FilmDTO();
-            newEntry.Actors = new ArrayList<>();
-            List<FilmActor> actorsByFilmId = filmActorRepository.findFilmActorsByFilm(film);
-            for (FilmActor filmActor: actorsByFilmId){
-                newEntry.Actors.add(filmActor.getActor());
-            }
-            newEntry.FilmId = film.getId();
-            newEntry.Title = film.getTitle();
-            newEntry.Date = film.getReleaseYear();
-            newEntry.Rating = film.getRating();
-            newEntry.Length = film.getLength();
-            newEntry.Description = film.getDescription();
-            films.add(newEntry);
+    public List<FilmDTO> FilmAndActorFactorySearchHandler(@RequestParam String query, @RequestParam Boolean type, @RequestParam String sort) {
+        List<FilmDTO> films;
+        if (query == null){
+            films = findFilmAndActor(sort);
         }
-        if (sort != null){
-            films.sort(Comparator.comparing(FilmDTO::getReleaseDate).reversed());
-        } else {films.sort(Comparator.comparing(FilmDTO::getReleaseDate));}
+        else if(type){
+            films = findFilmAndActorByFilm(query, sort);
+        }
+        else {
+            films = findFilmAndActorByActor(query, sort);
+        }
         return films;
     }
 
-    public List<FilmDTO> findFilmAndActorByFilm(@RequestParam String query, @RequestParam String sort) {
+    private List<FilmDTO> findFilmAndActor(@RequestParam String sort){
+        ArrayList<FilmDTO> films = new ArrayList<>();
+        for (Film film: filmRepository.findAll()){
+            FilmDTO newEntry = new FilmDTO();
+            List<Actor> actors = new ArrayList<>();
+            List<FilmActor> actorsByFilmId = filmActorRepository.findFilmActorsByFilm(film);
+            for (FilmActor filmActor: actorsByFilmId){
+                actors.add(filmActor.getActor());
+            }
+            newEntry.setActors(actors);
+            newEntry.setFilmId(film.getId());
+            newEntry.setTitle(film.getTitle());
+            newEntry.setDate(film.getReleaseYear());
+            newEntry.setRating(film.getRating());
+            newEntry.setLength(film.getLength());
+            newEntry.setDescription(film.getDescription());
+            films.add(newEntry);
+        }
+        if (sort != null){
+            films.sort(Comparator.comparing(FilmDTO::getDate).reversed());
+        } else {films.sort(Comparator.comparing(FilmDTO::getDate));}
+        return films;
+    }
+
+    private List<FilmDTO> findFilmAndActorByFilm(@RequestParam String query, @RequestParam String sort) {
         List<FilmDTO> allFilms = findFilmAndActor(sort);
         List<FilmDTO> resultFilms = new ArrayList<>();
         for (FilmDTO filmDTO: allFilms) {
-            if (filmDTO.Title.contains(query.toUpperCase())){
+            if (filmDTO.getTitle().contains(query.toUpperCase())){
                 resultFilms.add(filmDTO);
             }
         }
         return resultFilms;
     }
 
-    public Object findFilmAndActorByActor(@RequestParam String query, @RequestParam String sort) {
+    private List<FilmDTO> findFilmAndActorByActor(@RequestParam String query, @RequestParam String sort) {
         List<FilmDTO> allFilms = findFilmAndActor(sort);
         List<FilmDTO> resultFilms = new ArrayList<>();
         for (FilmDTO filmDTO: allFilms) {
-            for (Actor actor: filmDTO.Actors) {
+            for (Actor actor: filmDTO.getActors()) {
                 if (actor.getFullName().contains(query.toUpperCase())){
                     resultFilms.add(filmDTO);
                 }

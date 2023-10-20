@@ -22,17 +22,7 @@ public class FilmWebController {
                               @RequestParam(name = "searchType",required = false) Boolean type,
                               @RequestParam(name="sort", required = false) String sort) {
 
-        if (query == null){
-            model.addAttribute("films", filmService.findFilmAndActor(sort));
-        }
-        else if(type){
-            model.addAttribute("films", filmService.findFilmAndActorByFilm(query, sort));
-        }
-        else {
-            model.addAttribute("films", filmService.findFilmAndActorByActor(query, sort));
-        }
+        model.addAttribute("films", filmService.FilmAndActorFactorySearchHandler(query, type, sort));
         return "films";
-
-        //Doesn't Single Responsibility
     }
 }
